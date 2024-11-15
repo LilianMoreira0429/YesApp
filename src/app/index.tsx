@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, Button, Alert, FlatList, ImageBackground } from "react-native";
+import { View, Button, Text, Alert, FlatList, ImageBackground, ScrollView } from "react-native";
 import { router } from "expo-router";
 
 import { Input } from "@/components/Input";
@@ -22,15 +22,15 @@ export default function Index() {
   async function create() {
     try {
       if (isNaN(Number(quantity))) {
-        return Alert.alert("Telefone", "O telefone precisa ser um número!");
+        return Alert.alert("Quantidade", "A quantidade precisa ser um número!");
       }
 
       const response = await productDatabase.create({
         name,
-        telefone: Number(quantity),
+        quantity: Number(quantity),
       });
 
-      Alert.alert("O cliente foi cadastrado com o ID: " + response.insertedRowId);
+      Alert.alert("Produto cadastrado com o ID: " + response.insertedRowId);
     } catch (error) {
       console.log(error);
     }
@@ -39,16 +39,16 @@ export default function Index() {
   async function update() {
     try {
       if (isNaN(Number(quantity))) {
-        return Alert.alert("Telefone", "O telefone precisa ser um número!");
+        return Alert.alert("Quantidade", "A quantidade precisa ser um número!");
       }
 
-      const response = await productDatabase.update({
+      await productDatabase.update({
         id: Number(id),
         name,
-        telefone: Number(quantity),
+        quantity: Number(quantity),
       });
 
-      Alert.alert("Nome atualizado!");
+      Alert.alert("Produto atualizado!");
     } catch (error) {
       console.log(error);
     }
@@ -75,7 +75,7 @@ export default function Index() {
   function details(item: ProductDatabase) {
     setId(String(item.id));
     setName(item.name);
-    setQuantity(String(item.telefone));
+    setQuantity(String(item.quantity));
   }
 
   async function handleSave() {
@@ -96,39 +96,85 @@ export default function Index() {
   }, [search]);
 
   return (
-    <ImageBackground 
-      source={{ uri: "https://yt3.ggpht.com/ytc/AKedOLS-YodxmpaXcbUp6DGuhcTj2AJowoc-FtgqDZo-=s900-c-k-c0x00ffffff-no-rj" }} 
-      style={{ flex: 1, padding: 32, gap: 16 }}
-      resizeMode="contain"
+    <ImageBackground
+      source={{
+        uri: "https://1.bp.blogspot.com/-dTJ0nerUoOA/YEjXeqrhwdI/AAAAAAACVTQ/11GVq_4f0VMuzh1uGK3Jzy7t2Rqv_wmzQCLcBGAsYHQ/s576/logo.png",
+      }}
+      style={{ flex: 1 }}
+      resizeMode="cover"
     >
-      <Text style={{ fontSize: 24, fontWeight: 'bold', textAlign: 'center', marginBottom: 16, color: 'blue' }}>
-        Viva Hospedagem
-      </Text>
+      <View style={{ flex: 1, padding: 16 }}>
+        {/* Seção do Cabeçalho */}
+        <View style={{ alignItems: 'center', marginBottom: 20 }}>
+          <Text
+            style={{
+              fontSize: 34,
+              fontWeight: "bold",
+              textAlign: "center",
+              color: "#32CD32",
+            }}
+          >
+            Yes Cosmetics
+          </Text>
+        </View>
 
-      <Input placeholder="Nome" onChangeText={setName} value={name} />
-      <Input
-        placeholder="Telefone"
-        onChangeText={setQuantity}
-        value={quantity}
-      />
-
-      <Button title="Salvar" onPress={handleSave} />
-
-      <Input placeholder="Pesquisar" onChangeText={setSearch} />
-
-      <FlatList
-        data={products}
-        keyExtractor={(item) => String(item.id)}
-        renderItem={({ item }) => (
-          <Product
-            data={item}
-            onPress={() => details(item)}
-            onDelete={() => remove(item.id)}
-            onOpen={() => router.navigate(`/details/${item.id}`)}
+        {/* Seção do Formulário */}
+        <View style={{ flex: 0, paddingBottom: 20 }}>
+          <Input
+            placeholder="Produtos"
+            onChangeText={setName}
+            value={name}
+            placeholderTextColor="#4682B4"
+            style={{
+              borderWidth: 1,
+              borderColor: "#D3D3D3",
+              fontSize: 30,
+              color: "#32CD32",
+              marginBottom: 15,
+            }}
           />
-        )}
-        contentContainerStyle={{ gap: 16 }}
-      />
+
+          <Input
+            placeholder="Quantidade"
+            onChangeText={setQuantity}
+            value={quantity}
+            placeholderTextColor="#4682B4"
+            style={{
+              borderWidth: 1,
+              borderColor: "#D3D3D3",
+              fontSize: 30,
+              color: "#32CD32",
+              marginBottom: 15,
+            }}
+          />
+
+          <Button title="Salvar" onPress={handleSave} />
+        </View>
+
+        {/* Lista de Produtos */}
+        <View style={{ flex: 1, marginTop: 20 }}>
+          <FlatList
+            data={products}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={({ item }) => (
+              <Product
+                data={item}
+                onPress={() => details(item)}
+                onDelete={() => remove(item.id)}
+                onOpen={() => router.push(`/details/${item.id}`)}
+              />
+            )}
+            contentContainerStyle={{
+              gap: 16,
+              paddingBottom: 20,
+            }}
+            style={{
+              backgroundColor: "#F0F8FF",
+              borderRadius: 10,
+            }}
+          />
+        </View>
+      </View>
     </ImageBackground>
   );
 }

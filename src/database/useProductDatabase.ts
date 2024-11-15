@@ -3,7 +3,7 @@ import { useSQLiteContext } from "expo-sqlite"
 export type ProductDatabase = {
   id: number
   name: string
-  telefone: number
+  quantity: number
 }
 
 export function useProductDatabase() {
@@ -11,13 +11,13 @@ export function useProductDatabase() {
 
   async function create(data: Omit<ProductDatabase, "id">) {
     const statement = await database.prepareAsync(
-      "INSERT INTO clientes (name, telefone) VALUES ($name, $telefone)"
+      "INSERT INTO products (name, quantity) VALUES ($name, $quantity)"
     )
 
     try {
       const result = await statement.executeAsync({
         $name: data.name,
-        $telefone: data.telefone,
+        $quantity: data.quantity,
       })
 
       const insertedRowId = result.lastInsertRowId.toLocaleString()
@@ -32,7 +32,7 @@ export function useProductDatabase() {
 
   async function searchByName(name: string) {
     try {
-      const query = "SELECT * FROM clientes WHERE name LIKE ?"
+      const query = "SELECT * FROM products WHERE name LIKE ?"
 
       const response = await database.getAllAsync<ProductDatabase>(
         query,
@@ -47,14 +47,14 @@ export function useProductDatabase() {
 
   async function update(data: ProductDatabase) {
     const statement = await database.prepareAsync(
-      "UPDATE clientes SET name = $name, telefone = $telefone WHERE id = $id"
+      "UPDATE products SET name = $name, quantity = $quantity WHERE id = $id"
     )
 
     try {
       await statement.executeAsync({
         $id: data.id,
         $name: data.name,
-        $telefone: data.telefone,
+        $quantity: data.quantity,
       })
     } catch (error) {
       throw error
@@ -65,7 +65,7 @@ export function useProductDatabase() {
 
   async function remove(id: number) {
     try {
-      await database.execAsync("DELETE FROM clientes WHERE id = " + id)
+      await database.execAsync("DELETE FROM products WHERE id = " + id)
     } catch (error) {
       throw error
     }
@@ -73,7 +73,7 @@ export function useProductDatabase() {
 
   async function show(id: number) {
     try {
-      const query = "SELECT * FROM clientes WHERE id = ?"
+      const query = "SELECT * FROM products WHERE id = ?"
 
       const response = await database.getFirstAsync<ProductDatabase>(query, [
         id,

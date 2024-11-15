@@ -1,14 +1,14 @@
-import { Pressable, PressableProps, Text, TouchableOpacity } from "react-native"
-import { MaterialIcons } from "@expo/vector-icons"
+import { Pressable, PressableProps, Text, TouchableOpacity } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 
 type Props = PressableProps & {
   data: {
-    name: string
-    telefone: number
-  }
-  onDelete: () => void
-  onOpen: () => void
-}
+    name: string;
+    quantity: number;
+  };
+  onDelete: () => void;
+  onOpen: () => void;
+};
 
 export function Product({ data, onDelete, onOpen, ...rest }: Props) {
   return (
@@ -22,17 +22,20 @@ export function Product({ data, onDelete, onOpen, ...rest }: Props) {
       }}
       {...rest}
     >
-      <Text style={{ flex: 1 }}>
-        {data.telefone} - {data.name}
+      {/* Aumentando o tamanho da letra */}
+      <Text style={{ flex: 1, fontSize: 18 }}>
+        {data.quantity} - {data.name}
       </Text>
 
+      {/* Ícone de deletar */}
       <TouchableOpacity onPress={onDelete}>
-        <MaterialIcons name="delete" size={24} color="red" />
+        <MaterialIcons name="delete" size={24} color="black" />
       </TouchableOpacity>
 
+      {/* Ícone de visualização */}
       <TouchableOpacity onPress={onOpen}>
         <MaterialIcons name="visibility" size={24} color="blue" />
       </TouchableOpacity>
     </Pressable>
-  )
+  );
 }
